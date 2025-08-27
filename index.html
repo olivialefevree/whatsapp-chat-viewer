@@ -1,0 +1,98 @@
+
+<html>
+<head><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header class="topbar">
+<div class="brand">
+<span class="logo">💬</span>
+<span class="title">WhatsApp Chat Viewer</span>
+</div>
+<div class="top-actions">
+<button id="openLocalBtn" class="btn primary">Open Local .zip (no upload)</button>
+<input id="localZipInput" type="file" accept=".zip" hidden />
+<label class="switch" title="Toggle dark mode">
+<input type="checkbox" id="themeToggle">
+<span class="slider"></span>
+</label>
+</div>
+</header>
+
+
+<main class="layout">
+<aside class="sidebar">
+<div class="search-wrap">
+<input id="searchInput" type="search" placeholder="Search chats by name…" aria-label="Search chats by name">
+</div>
+<div class="gh-config">
+<details>
+<summary>GitHub Source (optional)</summary>
+<div class="gh-grid">
+<label>Owner
+<input id="ghOwner" placeholder="e.g. YOURNAME">
+</label>
+<label>Repo
+<input id="ghRepo" placeholder="e.g. your-repo">
+</label>
+<label>Branch
+<input id="ghBranch" placeholder="main">
+</label>
+<label>Folder
+<input id="ghPath" placeholder="chats">
+</label>
+<button id="saveGhConfig" class="btn small">Load from GitHub</button>
+</div>
+<p class="note">If this site is at <code>YOURNAME.github.io/REPO</code> we try to auto-detect these.</p>
+</details>
+</div>
+
+
+<h2 class="list-title">Chats on this site</h2>
+<ul id="chatList" class="chat-list" aria-live="polite"></ul>
+
+
+<div class="dropzone" id="dropzone" aria-label="Drop .zip files here">
+<strong>Drop .zip files here</strong>
+<span>They’ll appear in a temporary list below (not uploaded).</span>
+</div>
+
+
+<h2 class="list-title">Temporary (local) chats</h2>
+<ul id="tempList" class="chat-list secondary"></ul>
+</aside>
+
+
+<section class="viewer">
+<div class="viewer-header">
+<div class="room-meta">
+<h3 id="roomTitle">No chat loaded</h3>
+<div class="participants">
+<label>Your name:
+<select id="yourNameSelect" disabled>
+<option value="">—</option>
+</select>
+</label>
+<button id="flipSidesBtn" class="btn small" title="Flip left/right bubbles">Flip sides</button>
+</div>
+</div>
+<div class="viewer-actions">
+<button id="openInNewBtn" class="btn">Open viewer only</button>
+<button id="scrollBottomBtn" class="btn">Scroll to bottom</button>
+</div>
+</div>
+
+
+<div id="chatMount" class="chat"></div>
+
+
+<div class="statusbar" id="statusbar" aria-live="polite">Ready.</div>
+</section>
+</main>
+
+
+<!-- External libs via CDN (ok for a 3-file site) -->
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+
+<script src="script.js"></script>
+</body>
+</html>
