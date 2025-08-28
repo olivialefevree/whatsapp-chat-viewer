@@ -236,9 +236,18 @@ status(`Loaded ${messages.length} messages. Participants: ${participants.join(",
 // Scroll to bottom
 requestAnimationFrame(()=> $("#chatMount").scrollTop = $("#chatMount").scrollHeight);
 }function findChatTxtEntry(zip){
-// Otherwise any .txt in root
-const anyTxt = zip.file(/^[^\/]+\.txt$/i)[0];
-return anyTxt || null;
+  // Look for ANY .txt in the whole zip (subfolders too)
+  const candidates = zip.file(/\.txt$/i);
+  if (!candidates || !candidates.length) return null;
+
+  // Prefer WhatsApp’s usual names, but fall back to the first .txt
+  const preferred =
+        candidates.find(f => /(^|\/)_chat\.txt$/i.test(f.name)) ||
+        candidates.find(f => /WhatsApp\s+Chat/i.test(f.name))   ||
+        candidates.find(f => /_chat/i.test(f.name))             ||
+        candidates[0];
+
+  return preferred || null;
 }
 
 
@@ -273,21 +282,17 @@ return messages;
 
 
 function finalize(msg){
-// Extract attachments like <attached: filename>
-const attachRe = /<attached:\s*([^>]+?)>/gi;
-const editedRe = /<This message was edited>/i;
-msg.attachments = [];
-let match;
-while((match = attachRe.exec(msg.text))){
-const fname = match[1].trim();
-msg.attachments.push(fname);
-}
-msg.edited = editedRe.test(msg.text);
-// Clean text by removing the <attached:...> bits
-msg.text = msg.text.replace(attachRe, "").replace(/\s+$/,"%");
-msg.text = msg.text.replace(/%$/, "");
-return msg;
-}// ---- Rendering ----
+  const attachRe = /<attached:\s*([^>]+?)>/gi;
+  const editedRe = /<This message was edited>/i;
+  msg.attachments = [];
+  let match;
+  while ((match = attachRe.exec(msg.text))){
+    msg.attachments.push(match[1].trim());
+  }
+  msg.edited = editedRe.test(msg.text);
+  msg.text = msg.text.replace(attachRe, "").replace(/\s+$/, "");
+  return msg;
+}--- Rendering ----
 
 
 for(const m of messages){
@@ -420,6 +425,7 @@ loadGitHub = async function(opts){
 localStorage.setItem("wcv.gh", JSON.stringify(opts));
 await _loadGitHub(opts);
 };
+
 
 
 })();
